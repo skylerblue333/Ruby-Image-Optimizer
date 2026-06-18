@@ -1,0 +1,1 @@
+// Starting Ruby-Image-Optimizer service\n

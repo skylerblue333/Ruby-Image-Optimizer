@@ -1,0 +1,1 @@
+# Ruby-Image-Optimizer\n\n## Overview\nEnterprise-grade image optimizer implementation in Ruby.\n\n## Quick Start (1-Click Build)\n\n```bash\ngit clone https://github.com/skylerblue333/Ruby-Image-Optimizer.git\ncd Ruby-Image-Optimizer\n# Build instructions depend on the language\n```\n

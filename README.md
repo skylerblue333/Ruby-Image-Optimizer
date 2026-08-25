@@ -1,44 +1,27 @@
-<!-- PORTFOLIO PROJECT PROFILE: maintained by the repository owner -->
+# Sky Image Inspector — Ruby
 
-## Project profile and code-audit snapshot
+A small dependency-free Ruby CLI for bounded metadata inspection of PNG, JPEG, and GIF files. The historical repository name is retained, but the implemented product is an **image inspector and optimization-advice primitive**, not an image recompressor.
 
-**What this is:** **Ruby-Image-Optimizer** is a public repository described as: “Enterprise-grade image optimizer implementation in Ruby. #SkyCoin4444 #AI #Blockchain #DevOps #Innovation” Its dominant language signals are **Python (4 files)**.
+## Implemented behavior
 
-**Why it has value:** Its value is best understood through the implementation evidence currently present in the repository: **18 tracked files** were observed in the shallow audit, with the source structure and existing documentation providing the project’s specific context. This README does not treat a prototype, experiment, or archive as a production system without supporting evidence.
+- Detect PNG, JPEG, and GIF by binary structure rather than filename extension.
+- Extract validated width and height from supported formats.
+- Reject empty, malformed, unsupported, non-file, or oversized inputs.
+- Enforce a 32 MiB file-size ceiling.
+- Produce SHA-256 content identity.
+- Emit deterministic size/dimension-based optimization recommendations.
+- Read files only; the tool does not modify source images.
 
-**Implementation evidence:** 2 test-related file(s) detected; 2 dependency or package manifest(s) detected; 2 build/CI/infrastructure signal(s) detected; and 3 documentation or governance file(s) detected. Test filenames observed include `tests/__init__.py`, `tests/test_main.py`. Dependency or package files include `package.json`, `requirements.txt`. Build, CI, or infrastructure signals include `Dockerfile`, `.github/workflows/ci.yml`.
+```bash
+ruby bin/sky_image ./photo.jpg
+```
 
-**Current status:** The repository is tracked on the `main` branch. The existing source tree, configuration, tests, workflows, and documentation remain authoritative for supported behavior and maturity. A code audit is not a production-readiness certification, and the presence of a test or workflow file does not establish that all checks pass.
+## Verification
 
-**Relationship to the wider portfolio:** This repository is one focused component of the broader Skyler Blue Spillers portfolio across AI, software engineering, cloud and DevOps, cybersecurity, blockchain, finance, education, social systems, and creative work. It may provide a service boundary, implementation pattern, experiment, archive, or reusable idea for related repositories. Treat repositories as technical dependencies only where documented interfaces and verified project requirements support that relationship.
+The CI gate runs Ruby syntax checks, Minitest coverage for PNG/GIF/JPEG and invalid files, a real CLI smoke fixture, Docker build, non-root UID verification, and a containerized read-only-volume smoke test.
 
-**Quality and security note:** No obvious secret-like pattern was detected by the limited static scan; this is not a substitute for a security audit. No TODO/FIXME marker was detected in the scanned text files.
+## Product boundary
 
----
+This repository does **not** currently recompress, resize, transcode, strip metadata, repair, render, or rewrite images. It does not include libvips/ImageMagick codecs, AVIF/WebP encoders, EXIF parsing, animated-image analysis, malware scanning, content moderation, image recognition, cloud storage, a web API, queues, tenant isolation, or production deployment.
 
-# Ruby Image Optimizer
-
-![GitHub stars](https://img.shields.io/github/stars/skylerblue333/Ruby-Image-Optimizer?style=flat-square)
-![GitHub license](https://img.shields.io/github/license/skylerblue333/Ruby-Image-Optimizer?style=flat-square)
-
-## 🌟 Overview
-**Ruby-Image-Optimizer** is a professional-grade project within the **SkyCoin4444** ecosystem. It focuses on delivering high-value solutions in the domain of **Python**.
-
-## 🚀 Key Features
-- **Scalable Architecture**: Designed for enterprise-level growth and performance.
-- **Modern Standards**: Implements best practices for clean code and maintainability.
-- **Robust Integration**: Built to work seamlessly within modern cloud-native environments.
-
-## 🛠️ Technology Stack
-- **Primary Domain**: Python
-- **Ecosystem**: SkyCoin4444 Digital Platform
-
-## 📂 Structure
-The project is organized into a modular structure to ensure clarity and ease of development.
-
-## 👨‍💻 Author
-**Skyler Blue Spillers**
-*Professional Chess Player & Software Engineer*
-
----
-*Powered by SkyCoin4444*
+Optimization recommendations are heuristics based only on dimensions, byte size, and format. They are not proof that a smaller representation can be generated without unacceptable quality loss. A future optimizer should introduce a real, tested codec backend and compare output size/quality before the repository makes compression claims.

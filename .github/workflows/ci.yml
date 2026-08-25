@@ -1,12 +1,35 @@
-name: CI
-on: [push, pull_request]
+name: image-inspector-ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  verify:
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
         with:
-          python-version: '3.11'
-      - run: pip install -r requirements.txt
-      - run: pytest tests/ -v
+          ruby-version: '3.3'
+      - name: Syntax
+        run: ruby -c lib/sky_image.rb && ruby -c bin/sky_image
+      - name: Tests
+        run: ruby -Itest test/sky_image_test.rb
+      - name: CLI smoke
+        run: |
+          ruby -e 'File.binwrite("/tmp/test.gif", "GIF89a".b + [64,32].pack("vv") + "\0".b * 8)'
+          ruby bin/sky_image /tmp/test.gif | grep 'format=gif width=64 height=32'
+      - name: Build image
+        run: docker build -t sky-image-inspector:${{ github.sha }} .
+      - name: Verify non-root image
+        run: test "$(docker run --rm --entrypoint /usr/bin/id sky-image-inspector:${{ github.sha }} -u)" != "0"
+      - name: Container smoke
+        run: |
+          mkdir -p /tmp/sky-image
+          ruby -e 'File.binwrite("/tmp/sky-image/test.gif", "GIF89a".b + [64,32].pack("vv") + "\0".b * 8)'
+          chmod 755 /tmp/sky-image && chmod 644 /tmp/sky-image/test.gif
+          docker run --rm -v /tmp/sky-image:/data:ro sky-image-inspector:${{ github.sha }} /data/test.gif | grep 'format=gif'

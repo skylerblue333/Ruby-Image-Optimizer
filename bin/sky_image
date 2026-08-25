@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "../lib/sky_image"
+
+if ARGV.length != 1
+  warn "usage: sky_image <image-path>"
+  exit 2
+end
+
+begin
+  result = SkyImage.inspect_file(ARGV.fetch(0))
+  puts "format=#{result.format} width=#{result.width} height=#{result.height} bytes=#{result.bytes} sha256=#{result.sha256}"
+  result.recommendations.each { |note| puts "recommendation=#{note}" }
+rescue StandardError => e
+  warn "error: #{e.message}"
+  exit 2
+end
